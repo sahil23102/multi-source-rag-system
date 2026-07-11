@@ -1,106 +1,221 @@
-# 🔍 Intelligent RAG-Based Document Retrieval System
+# 🔍 Multi-Source RAG Knowledge Assistant
 
-## 📌 Overview
-This project implements a **Retrieval-Augmented Generation (RAG) system** for intelligent document search and retrieval. It enables users to extract, preprocess, store, and query text from **PDFs, CSVs, voice files, web links and Youtube videos**, leveraging a **vector database and LLMs** for accurate responses.
+> 🏆 Developed during a 3-member hackathon. This repository contains my maintained version of the project, preserving the original development history and future improvements.
 
-## 🏗️ Architecture
-```
-[ User ] → [ Frontend UI ] → [ API (FastAPI) ] → [ Vector DB (FAISS/Pinecone) ] → [ Embedding Model ] → [ LLM (Hugging Face) ]
-```
-
-## 🚀 Features
-✅ **Multi-source data ingestion**: PDFs, CSVs, voice files, web links  
-✅ **Embeddings-based retrieval**: Efficient search via FAISS/Pinecone  
-✅ **LLM-powered responses**: Uses transformers for intelligent answers  
-✅ **Transparent retrieval**: Returns top-k chunks with similarity scores  
-✅ **Automatic database updates**: Watches for document changes  
-✅ **User-friendly UI**: Built with **Streamlit/Gradio**  
-✅ **REST API support**: Query system programmatically using FastAPI  
+A Retrieval-Augmented Generation (RAG) system that enables intelligent question answering over multiple document sources including PDFs, CSV files, websites, YouTube videos, and audio files through automated ingestion, semantic retrieval, and LLM-powered responses.
 
 ---
 
-## 📂 Project Structure
+# ✨ Features
+
+### 📄 Multi-Source Document Ingestion
+
+Supports processing and indexing of:
+
+- PDF documents
+- CSV datasets
+- Websites
+- YouTube videos
+- Audio files (MP3, WAV, M4A)
+
+Each source has a dedicated processing pipeline for extracting and normalizing textual content.
+
+---
+
+### 🧠 Intelligent Retrieval
+
+- Semantic document chunking using LangChain SemanticChunker
+- Sentence-Transformer embeddings
+- Configurable Top-K retrieval
+- Similarity score filtering
+- Source attribution for retrieved chunks
+
+---
+
+### 🤖 AI Question Answering
+
+- Together AI integration
+- Meta-Llama-3.1-8B-Instruct-Turbo
+- Context-aware answer generation
+- Confidence-based retrieval workflow
+
+---
+
+### 📚 Collection Management
+
+- Create multiple document collections
+- Switch between collections
+- Delete collections
+- Remove individual documents
+- Persistent storage across application restarts
+
+---
+
+### 📑 Rich Document Processing
+
+#### PDF
+
+- Text extraction using pdfplumber
+- OCR for scanned PDFs using pytesseract
+- Image extraction
+- Embedded hyperlink discovery
+- Automatic webpage extraction from detected links
+
+#### CSV
+
+- Column summaries
+- Data type detection
+- Numeric statistics
+- Sample previews
+
+#### Websites
+
+- Main content extraction using Trafilatura
+- HTML parsing using BeautifulSoup
+- One-level internal link crawling
+
+#### YouTube
+
+- Audio extraction using yt-dlp
+- FFmpeg conversion
+- Speech transcription using Whisper
+
+#### Audio
+
+- Local Whisper transcription
+- Automatic preprocessing
+
+---
+
+### ⚡ Additional Features
+
+- Keyword extraction using RAKE + NLTK
+- Automatic file monitoring with Watchdog
+- Similarity score visualization
+- Collection explorer
+- Temporary file cleanup
+- Interactive Streamlit interface
+
+---
+
+# 🏗 Architecture
+
 ```
-📦 RAG-System
- ┣ 📂 data_ingestion
- ┃ ┣ 📜 extract_pdfs.py
- ┃ ┣ 📜 extract_csvs.py
- ┃ ┣ 📜 extract_voice.py
- ┃ ┣ 📜 extract_web.py 
- ┃ ┗ 📜 extract_yt_videos.py
- 
- ┣ 📂 vector_store
- ┃ ┣ 📜 faiss_store.py
- ┃ ┗ 📜 pinecone_store.py
- ┣ 📂 rag_engine
- ┃ ┣ 📜 retriever.py
- ┃ ┣ 📜 generator.py
- ┃ ┗ 📜 query_pipeline.py
- ┣ 📂 ui
- ┃ ┗ 📜 app.py
- ┣ 📜 requirements.txt
- ┣ 📜 README.md
- ┗ 📜 main.py
+                   +----------------------+
+                   |      Streamlit UI    |
+                   +----------+-----------+
+                              |
+                              |
+                    User Upload / Query
+                              |
+                              v
+                +--------------------------+
+                | Document Processing Layer|
+                +--------------------------+
+          PDF | CSV | Website | Audio | YouTube
+                              |
+                              v
+                  Semantic Chunk Generation
+                              |
+                              v
+                  Sentence Transformer Embeddings
+                              |
+                              v
+                  Custom Vector Store (FAISS)
+                              |
+                              v
+                 Retrieval + Similarity Ranking
+                              |
+                              v
+            Together AI (Llama 3.1 Instruct Turbo)
+                              |
+                              v
+                    Generated Response
 ```
 
 ---
 
-## ⚙️ Tech Stack
-| Component        | Technology |
-|-----------------|------------|
-| **Backend**     | Python |
-| **Data Parsing**| PyPDF2, pandas, BeautifulSoup, Whisper |
-| **Vector DB**   | FAISS / Pinecone |
-| **Embeddings**  | Sentence-Transformers (all-MiniLM-L6-v2) |
-| **LLM**         | Hugging Face Transformers (facebook/bart-large) |
-| **Frontend**    | Streamlit / Gradio |
-| **API**         | FastAPI |
+# 🛠 Tech Stack
+
+| Category | Technologies |
+|----------|--------------|
+| Language | Python 3.11 |
+| Frontend | Streamlit |
+| LLM | Together AI (Meta Llama 3.1 8B Instruct Turbo) |
+| Embeddings | Sentence Transformers |
+| Vector Search | FAISS |
+| Document Processing | pdfplumber, pandas, BeautifulSoup, pytesseract |
+| Audio Processing | Whisper, yt-dlp |
+| NLP | LangChain, NLTK, RAKE |
+| Monitoring | Watchdog |
 
 ---
 
-## 🛠️ Installation
+# 📂 Project Structure
+
+```
+multi-source-rag-system/
+
+├── app.py
+├── utils/
+│   ├── document_processor.py
+│   ├── rag_engine.py
+│   ├── vector_store.py
+│   ├── file_monitor.py
+│   └── ...
+├── data/
+├── uploads/
+├── temp/
+├── requirements.txt
+└── README.md
+```
+
+---
+
+# 🚀 Installation
+
 ```bash
-# Clone the repository
-git clone https://github.com/butterpaneermasala/hacko-tech
-cd rag-system
+git clone https://github.com/sahil23102/multi-source-rag-system.git
 
-# Install dependencies
+cd multi-source-rag-system
+
 pip install -r requirements.txt
+```
 
-# run
+---
+
+# ▶ Running
+
+```bash
 streamlit run app.py
 ```
 
 ---
 
-## 🚀 Usage
-### 1️⃣ Start the API
-```bash
-python main.py
-```
-### 2️⃣ Access the UI
-```bash
-streamlit run ui/app.py
-```
-### 3️⃣ API Endpoints
-| Method | Endpoint | Description |
-|--------|----------|-------------|
-| POST | `/ingest` | Upload and process documents |
-| GET  | `/query?text=your_query` | Search documents and get responses |
-| GET  | `/collections` | List available document collections |
+# 🔎 Workflow
+
+1. Create a document collection.
+2. Upload PDFs, CSVs, websites, YouTube links, or audio files.
+3. Documents are processed and indexed.
+4. Ask natural language questions.
+5. The system retrieves relevant context.
+6. Llama 3.1 generates answers grounded in retrieved documents.
 
 ---
 
-## 🔒 Security Measures
-✔ Input validation for document uploads  
-✔ Confidence thresholds for LLM responses  
-✔ Metadata and access controls for stored data  
+# 🚧 Future Improvements
+
+- FastAPI backend
+- Next.js frontend
+- PostgreSQL metadata storage
+- Redis caching
+- Cross-encoder reranking
+- Hybrid keyword + embedding retrieval
+- Docker deployment
+- Authentication & multi-user support
 
 ---
 
-## 📌 Future Enhancements
-🔹 Implement cross-encoder for better re-ranking  
-🔹 Support additional file formats (JSON, DOCX)  
-🔹 Optimize embeddings with knowledge distillation  
+# 📄 License
 
-📢 **Contributions are welcome!** Feel free to open an issue or submit a PR. 🙌
+This repository is intended for educational and portfolio purposes.
